@@ -22,9 +22,9 @@ jobs:
           echo "::set-output name=payload::$payload"
       # Our action, validTasks and validTasksGroupThree can be changed if the course changes
       - run:
-          python check_rules.py
-        with: 
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          payload: ${{ steps.echoPayload.outputs.payload}}
-          filesAdded: ${{ steps.get_file_changes.outputs.files_added}}
-          filesChanged: ${{ steps.get_file_changes.outputs.files_modified }}
+          python check_rules.py ${{ secrets.GITHUB_TOKEN }} ${{ steps.echoPayload.outputs.payload}} ${{ steps.get_file_changes.outputs.files_added}} ${{ steps.get_file_changes.outputs.files_modified }}
+        # with: 
+        #   github-token: ${{ secrets.GITHUB_TOKEN }}
+        #   payload: ${{ steps.echoPayload.outputs.payload}}
+        #   filesAdded: ${{ steps.get_file_changes.outputs.files_added}}
+        #   filesChanged: ${{ steps.get_file_changes.outputs.files_modified }}
