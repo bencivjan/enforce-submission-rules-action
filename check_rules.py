@@ -4,7 +4,11 @@ from github import Github
 
 def main():
 
-    github = Github(sys.argv[1])
+    f = open('token.txt','r')
+    github = Github(f.readline())
+    f.close()
+
+    # github = Github(sys.argv[1])
     repo = github.get_repo('KTH/devops-course', lazy=False)
 
     # Change once on PR   
