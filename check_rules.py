@@ -8,9 +8,16 @@ pr = repo.get_pull(1650)
 
 # commits = pr.get_commits()
 
-# num_students = 0
+num_students = 0
 
-print(pr.body)
+words = pr.body.split()
+
+for word in words:
+    if '@kth.se' in word:
+        num_students+=1
+
+print ('Num students: ', num_students)
+
 
 # for commit in commits:
 #     files = commit.files
