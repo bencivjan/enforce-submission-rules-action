@@ -6,11 +6,11 @@ repo = github.get_repo('KTH/devops-course', lazy=False)
 
 pr = repo.get_pull(1650)
 
-commits = pr.get_commits()
+# commits = pr.get_commits()
 
-num_students = 0
+# num_students = 0
 
-readme = repo.get_contents('README.md').decoded_content
+readme = pr.get_contents('README.md').decoded_content
 
 print(readme)
 
