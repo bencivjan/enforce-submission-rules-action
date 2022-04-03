@@ -1,0 +1,8 @@
+name: DevOps Course Rules Enforcement
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+        run:
+            python check_rules.py
