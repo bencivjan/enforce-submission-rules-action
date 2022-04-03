@@ -56,33 +56,35 @@ def main():
 
     print('First off, hello world.')
 
-    github_token = sys.argv[1]
-    payload = sys.argv[2]
-    files_added = re.sub('[\\\"\[\]]+', '', sys.argv[3]).split(',')
-    files_changed = re.sub('[\\\"\[\]]+', '', sys.argv[4]).split(',')
+    print (sys.argv)
 
-    file_added_parts = process_added_files(files_added)
-    file_changed_parts = process_added_files(files_changed)
+    # github_token = sys.argv[1]
+    # payload = sys.argv[2]
+    # files_added = re.sub('[\\\"\[\]]+', '', sys.argv[3]).split(',')
+    # files_changed = re.sub('[\\\"\[\]]+', '', sys.argv[4]).split(',')
 
-    # append added files and changed files into one list.
-    files_parts = file_added_parts
-    for f in file_changed_parts:
-        files_parts.append(f)
+    # file_added_parts = process_added_files(files_added)
+    # file_changed_parts = process_added_files(files_changed)
 
-    repo_main, pull_request_number = process_json(payload)
+    # # append added files and changed files into one list.
+    # files_parts = file_added_parts
+    # for f in file_changed_parts:
+    #     files_parts.append(f)
 
-    valid_files, task, student_names, num_students = check_student_pr(files_parts)
+    # repo_main, pull_request_number = process_json(payload)
 
-    # If none of the added or changed files is a valid student submission, return nothing
-    if True not in valid_files:
-        return
+    # valid_files, task, student_names, num_students = check_student_pr(files_parts)
+
+    # # If none of the added or changed files is a valid student submission, return nothing
+    # if True not in valid_files:
+    #     return
         
         
-    print(json.dumps({   
-        "The students": student_names, 
-        "Their task" : task,
-        "The number of students": num_students
-        }))
+    # print(json.dumps({   
+    #     "The students": student_names, 
+    #     "Their task" : task,
+    #     "The number of students": num_students
+    #     }))
 
 
 if __name__ == "__main__":
