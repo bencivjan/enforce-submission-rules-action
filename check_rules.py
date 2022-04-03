@@ -55,6 +55,8 @@ def check_partners():
     return True
 
 print(sys.argv[1])
+print(sys.argv[2])
+
 
 example_body = '''
 # Assignment Proposal
