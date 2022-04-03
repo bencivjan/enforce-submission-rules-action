@@ -11,9 +11,7 @@ These include:
 import sys
 import re
 
-students = []
-
-def find_students(text: str):
+def find_students(students: list, text: str):
     words = text.split()
     for word in words:
         if '@kth.se' in word:
@@ -22,6 +20,7 @@ def find_students(text: str):
                 if char.isalpha():
                     name += char
             students.append(name)
+    return students
 
 
 def check_partners():
@@ -57,5 +56,5 @@ The manufacture of medical devices is a strictly regulated domain in the Europea
 We want to give a presentation on how the healthcare industry can (and has) implemented a DevOps methodology to improve software quality. We will discuss DevOps generally but focus on CI/CD pipelines for healthcare software. 
 '''
 
-find_students(example_body)
-print(students)
+students = []
+print(find_students(students, example_body))
