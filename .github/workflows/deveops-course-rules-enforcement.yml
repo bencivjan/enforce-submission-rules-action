@@ -11,4 +11,4 @@ jobs:
       - run:
           pip install PyGithub
       - run:
-          python check_rules.py ${{ secrets.GITHUB_TOKEN }}
+          python check_rules.py ${{ secrets.GITHUB_TOKEN }} ${{github.event}}
