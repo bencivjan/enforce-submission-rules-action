@@ -10,9 +10,7 @@ pr = repo.get_pull(1650)
 
 # num_students = 0
 
-readme = pr.get_contents('README.md').decoded_content
-
-print(readme)
+print(pr.body)
 
 # for commit in commits:
 #     files = commit.files
