@@ -4,7 +4,7 @@ from github import Github
 
 def main():
 
-    print (sys.argv[2])
+    print (sys.argv[2].number)
 
     github = Github(sys.argv[1])
     repo = github.get_repo('KTH/devops-course', lazy=False)
