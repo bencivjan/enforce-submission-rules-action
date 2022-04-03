@@ -11,15 +11,17 @@ def main():
 
     pr = repo.get_pull(1650)
 
-    num_students = 0
+    print(pr.body)
 
-    words = pr.body.split()
+    # num_students = 0
 
-    for word in words:
-        if '@kth.se' in word:
-            num_students+=1
+    # words = pr.body.split()
 
-    print ('Num students: ', num_students)
+    # for word in words:
+    #     if '@kth.se' in word:
+    #         num_students+=1
+
+    # print ('Num students: ', num_students)
 
 if __name__ == "__main__":
     main()
