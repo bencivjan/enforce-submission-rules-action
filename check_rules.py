@@ -54,7 +54,7 @@ Process the expected input from command line:
 """
 def main():
 
-    print('First off, hello world')
+    print('First off, hello world.')
 
     github_token = sys.argv[1]
     payload = sys.argv[2]
