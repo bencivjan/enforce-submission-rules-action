@@ -56,10 +56,8 @@ def main():
 
     print('First off, hello world.')
 
-    print (sys.argv)
-
-    # github_token = sys.argv[1]
-    # payload = sys.argv[2]
+    github_token = sys.argv[1]
+    payload = sys.argv[2]
     # files_added = re.sub('[\\\"\[\]]+', '', sys.argv[3]).split(',')
     # files_changed = re.sub('[\\\"\[\]]+', '', sys.argv[4]).split(',')
 
@@ -71,7 +69,10 @@ def main():
     # for f in file_changed_parts:
     #     files_parts.append(f)
 
-    # repo_main, pull_request_number = process_json(payload)
+    repo_main, pull_request_number = process_json(payload)
+
+    print(repo_main)
+    print(pull_request_number)
 
     # valid_files, task, student_names, num_students = check_student_pr(files_parts)
 
