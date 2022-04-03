@@ -8,9 +8,16 @@ pr = repo.get_pull(1650)
 
 commits = pr.get_commits()
 
-for commit in commits:
-    files = commit.files
-    for file in files:
-        filename = file.filename
-        contents = repo.get_contents(filename, ref=commit.sha).decoded_content
-        print(contents)
+num_students = 0
+
+readme = repo.get_contents('README.md').decoded_content
+
+print(readme)
+
+# for commit in commits:
+#     files = commit.files
+#     for file in files:
+#         filename = file.filename
+#         contents = repo.get_contents(filename, ref=commit.sha).decoded_content
+
+            
