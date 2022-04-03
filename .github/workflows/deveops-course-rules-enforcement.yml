@@ -1,8 +1,30 @@
 name: DevOps Course Rules Enforcement
-on: [push]
+on:
+  push:
 jobs:
-  Explore-GitHub-Actions:
+  build:
     runs-on: ubuntu-latest
     steps:
-        run:
-            python check_rules.py
+      # Checkout latest version of repo
+      - uses: actions/checkout@v2
+        name: "Checkout"
+      # Use trilom/file_changes_action to get changed and added files
+      - name: "Get file changes"
+        id: get_file_changes
+        uses: trilom/file-changes-action@v1.2.4
+      # Get Github event path and escape %, \n and \r characters
+      - id: echoPayload
+        run: |
+          payload=$(cat $GITHUB_EVENT_PATH)
+          payload="${payload//'%'/'%25'}"
+          payload="${payload//$'\n'/'%0A'}"
+          payload="${payload//$'\r'/'%0D'}"
+          echo "::set-output name=payload::$payload"
+      # Our action, validTasks and validTasksGroupThree can be changed if the course changes
+      - run:
+          python check_rules.py
+        with: 
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          payload: ${{ steps.echoPayload.outputs.payload}}
+          filesAdded: ${{ steps.get_file_changes.outputs.files_added}}
+          filesChanged: ${{ steps.get_file_changes.outputs.files_modified }}
