@@ -248,6 +248,17 @@ def main():
         soloCheck(students[0],repo)
     elif len(students) == 2:
         partnerCheck(students,repo)
+    elif len(students) == 3:
+        # two = students[0]
+        # two = two.append(students[1])
+        # partnerCheck(two,repo)
+        # two = students[0]
+        # two = two.append(students[2])
+        # partnerCheck(two,repo)
+        # two = students[1]
+        # two = two.append(students[2])
+        # partnerCheck(two,repo)
+        pass
     else:
         raise RuntimeError("Issue with number of students on the PR")
 
