@@ -235,7 +235,9 @@ def main():
     # pr_num = 1614 # Preson's demo pull request
     # pr_num = sys.argv[2]
 
-    pr = repo.get_pull(sys.argv[2])
+    print(sys.argv[2])
+    print(type(sys.argv[2]))
+    pr = repo.get_pull(int(sys.argv[2]))
     students = []
 
     # Use Ben's method of getting student names
