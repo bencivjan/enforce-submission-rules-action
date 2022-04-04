@@ -242,8 +242,8 @@ def main():
 
     # Production
     github = Github(sys.argv[1])
-    pr = repo.get_pull(int(sys.argv[2]))
     repo = github.get_repo(sys.argv[3], lazy=False)
+    pr = repo.get_pull(int(sys.argv[2]))
     students = []
 
     find_students(students, pr.body)
