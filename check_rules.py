@@ -221,12 +221,12 @@ def check_topic_limit(students: list, repo, pr):
 
 def main():
 
-    # Local Testing
-    f = open('token.txt','r')
-    github = Github(f.readline())
-    f.close()
+#     # Local Testing
+#     f = open('token.txt','r')
+#     github = Github(f.readline())
+#     f.close()
 
-    repo = github.get_repo('KTH/devops-course', lazy=False)
+#     repo = github.get_repo('KTH/devops-course', lazy=False)
     
     # pr_num = 1606   # worked alone once
     # pr_num = 1605   # worked alone twice
