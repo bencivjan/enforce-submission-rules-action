@@ -4,8 +4,8 @@ We will create a script to enforce the submission rules of the course.
 These include:
 1. Ensuring that students are not partners with the same person for more than two projects
 2. Ensuring that students are not working alone for more than two projects
-3. Ensuring that a student is not choosing the same topic (ex. Testing & CI, Containers & Serverless, etc.) for two different tasks
-4. Making sure that a student has not done more a task (ex. presentation, essay, etc.) more than once
+3. Ensuring that a student is not choosing the same topic (ex. Testing & CI, Containers & Serverless, etc.) for a demo and presentation
+4. Making sure that a student has not done a task (ex. presentation, essay, etc.) more than once
 '''
 
 from ctypes import sizeof
@@ -81,12 +81,10 @@ def soloCheck(name, repo, pr):
     else:
         files_changed = commits[0]
 
+    adding = False
     for file in files_changed.files:
         if file.status == "added":
             adding = True
-        else:
-            adding = False
-
 
     if (adding):
         if num_times_alone > 1:
@@ -149,11 +147,10 @@ def partnerCheck(students, repo, pr):
     else:
         files_changed = commits[0]
 
+    adding = False
     for file in files_changed.files:
         if file.status == "added":
             adding = True
-        else:
-            adding = False
 
     if (adding):
         if num_times_together > 1:
