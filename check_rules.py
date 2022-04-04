@@ -183,10 +183,16 @@ def check_task_limit(students: list, repo, pr):
         files_changed = commits[0]
 
     tasks_submitted = []
+    print(files_changed.files)
     for file in filter(lambda f : f.status == 'added', files_changed.files):
         path = file.filename.split('/')
         if path[0] == 'contributions':
             tasks_submitted.append(file.filename)
+    
+    for t in task_submitted:
+        print(t)
+    else:
+        print("NO TASKS")
 
     # since we need the path index of the groups, we need to know which tasks have subfolders that
     # organize group submissions by topic
