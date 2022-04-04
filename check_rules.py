@@ -176,17 +176,17 @@ def check_task_limit(students: list, repo, pr):
     # There could be multiple commits
     tasks_submitted = []
 
+    # Don't allow students to include different tasks or topics in the same pr
     for files_changed in commits:
-        print(files_changed.files)
+        # print(files_changed.files)
         for file in filter(lambda f : f.status == 'added', files_changed.files):
             path = file.filename.split('/')
             if path[0] == 'contributions':
                 tasks_submitted.append(file.filename)
+
+    if len(tasks_submitted) > 1:
+        raise RuntimeError("Please only create one file per pull request")
         
-    for t in task_submitted:
-        print(t)
-    else:
-        print("NO TASKS")
 
     # since we need the path index of the groups, we need to know which tasks have subfolders that
     # organize group submissions by topic
@@ -224,7 +224,7 @@ def check_topic_limit(students: list, repo, pr):
     valid_tasks = ['presentation', 'demo'] # For now only presentations and demos are ordered by topic date
     tasks_submitted = []
     topics_submitted = []
-    
+
     for files_changed in commits:
         for file in filter(lambda f : f.status == 'added', files_changed.files):
             path = file.filename.split('/')
@@ -232,6 +232,8 @@ def check_topic_limit(students: list, repo, pr):
                 tasks_submitted.append(path[1])
                 topics_submitted.append(path[2])
 
+    if len(tasks_submitted) > 1:
+        raise RuntimeError("Please only create one file per pull request")
 
     # for each student
     #   for each valid task, check the(each) topic for the student's name
@@ -282,6 +284,9 @@ def main():
     
     find_students(students, pr.body)
 
+    check_topic_limit(students, repo, pr)
+    check_task_limit(students, repo, pr)
+
     if len(students) == 1:
         soloCheck(students[0],repo, pr)
     elif len(students) == 2:
@@ -301,9 +306,6 @@ def main():
         partnerCheck(two,repo, pr)
     else:
         raise RuntimeError("Issue with number of students on the PR")
-
-    check_topic_limit(students, repo, pr)
-    check_task_limit(students, repo, pr)
 
 
 if __name__ == "__main__":
