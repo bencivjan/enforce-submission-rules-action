@@ -15,8 +15,4 @@ jobs:
       - run:
           pip install PyGithub
       - run:
-          echo ${{github.repository}}
-          echo ${{ github.repo.name }}
-          echo "$GITHUB_REPOSITORY"
-          echo "$REPOSITORY_NAME"          
-          python check_rules.py ${{ secrets.GITHUB_TOKEN }} ${{ github.event.pull_request.number }} ${{ github.repo.name }}
+          python check_rules.py ${{ secrets.GITHUB_TOKEN }} ${{ github.event.pull_request.number }} ${{github.repository}}
