@@ -175,6 +175,7 @@ def check_task_limit(students: list, repo, pr):
 
     # There could be multiple commits
     tasks_submitted = []
+    topics_submitted = []
 
     # Don't allow students to include different tasks or topics in the same pr
     for files_changed in commits:
@@ -194,26 +195,27 @@ def check_task_limit(students: list, repo, pr):
 
     for task_filename in tasks_submitted:
         task_submitted = task_filename.split('/')[1]
-        topic_submitted = task_filename.split('/')[2]
+        for topic_filename in topics_submitted:
+            topic_submitted = topic_filename.split('/')[2]
 
-        groupNamePathIndex = 2
-        if task_submitted in tasks_organized_by_date:
-            groupNamePathIndex = 3
-        print(f'groupNamePathIndex: {groupNamePathIndex}')
-        # Go to task directory to see if they have already done this task
-        previous_groups = repo.get_contents(f'contributions/{task_submitted}')
-        if groupNamePathIndex == 3:
-            previous_groups = repo.get_contents(f'contributions/{task_submitted}/{topic_submitted}')
+            groupNamePathIndex = 2
+            if task_submitted in tasks_organized_by_date:
+                groupNamePathIndex = 3
+            print(f'groupNamePathIndex: {groupNamePathIndex}')
+            # Go to task directory to see if they have already done this task
+            previous_groups = repo.get_contents(f'contributions/{task_submitted}')
+            if groupNamePathIndex == 3:
+                previous_groups = repo.get_contents(f'contributions/{task_submitted}/{topic_submitted}')
 
-        for group in filter(lambda g : g.type == 'dir', previous_groups):            
-            group_names = group.path.split('/')[groupNamePathIndex].split('-')
-            group_names = [name.lower() for name in group_names]
-            for student in students:
-                print(f'student: {student}, group_names: {group_names}')
-                if student in group_names:
-                    raise RuntimeError(f'Student {student} has already completed task {task_submitted}')
-        # if task_list.type == 'dir':
-        #     print(task_list.path)
+            for group in filter(lambda g : g.type == 'dir', previous_groups):            
+                group_names = group.path.split('/')[groupNamePathIndex].split('-')
+                group_names = [name.lower() for name in group_names]
+                for student in students:
+                    print(f'student: {student}, group_names: {group_names}')
+                    if student in group_names:
+                        raise RuntimeError(f'Student {student} has already completed task {task_submitted}')
+            # if task_list.type == 'dir':
+            #     print(task_list.path)
     return True
 
 
