@@ -196,7 +196,10 @@ def check_task_limit(students: list, repo, pr):
         task_submitted = task_filename.split('/')[1]
         topic_submitted = task_filename.split('/')[2]
 
-        groupNamePathIndex = 2 if task_submitted not in tasks_organized_by_date else 3
+        groupNamePathIndex = 2
+        if task_submitted in tasks_organized_by_date:
+            groupNamePathIndex = 3
+        print(f'groupNamePathIndex: {groupNamePathIndex}')
         # Go to task directory to see if they have already done this task
         previous_groups = repo.get_contents(f'contributions/{task_submitted}')
         if groupNamePathIndex == 3:
