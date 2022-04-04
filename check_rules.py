@@ -60,8 +60,8 @@ def soloCheck(name, repo):
     print("Number of times ", name, "worked alone: ", num_times_alone)
 
 
-    if num_times_alone >=2:
-        print ("Student may not work alone again")
+    if num_times_alone > 1:
+        raise RuntimeError("Student may not work alone again")
     else:
         print ("Student okay to work alone")
 
@@ -111,14 +111,8 @@ def partnerCheck(students, repo):
         if students[0] in word[1] and students[1] in word[1]:
             num_times_together+=1
 
-
-    print("Number of times ", students, "worked together: ", num_times_together)
-
-    if num_times_together >=2:
-        print ("Students may not work together again")
-    else:
-        print ("Student okay to work together")
-
+    if num_times_together > 1:
+        raise RuntimeError("Students have already worked together twice")
 
 
 def main():
@@ -129,15 +123,18 @@ def main():
     # github = Github(sys.argv[1])
 
     repo = github.get_repo('KTH/devops-course', lazy=False)
-
-    pr_num = 1650
-    # pr_num = 1605
+    
+    # pr_num = 1606   # worked alone once
+    # pr_num = 1605   # worked alone twice
+    # pr_num = 1582   # worked together once
+    pr_num = 1650   # worked together twice
     # pr_num = sys.argv[2]
 
     pr = repo.get_pull(pr_num)
     words = pr.body.split()
     students = []
 
+    # Use Ben's method of getting student names
     for word in words:
         if '@kth.se' in word:
             students.append(word.split('(')[1].split('@')[0])
@@ -147,7 +144,7 @@ def main():
     elif len(students) == 2:
         partnerCheck(students,repo)
     else:
-        print('Issue with number of students on the PR')
+        raise RuntimeError("Issue with number of students on the PR")
 
 
 if __name__ == "__main__":
