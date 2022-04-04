@@ -174,21 +174,15 @@ def check_task_limit(students: list, repo, pr):
     commits = pr.get_commits()
 
     # There could be multiple commits
-    files_changed = []
-
-    # Take last commit
-    if commits.totalCount >= 1:
-        files_changed = commits[commits.totalCount - 1]
-    else:
-        files_changed = commits[0]
-
     tasks_submitted = []
-    print(files_changed.files)
-    for file in filter(lambda f : f.status == 'added', files_changed.files):
-        path = file.filename.split('/')
-        if path[0] == 'contributions':
-            tasks_submitted.append(file.filename)
-    
+
+    for files_changed in commits:
+        print(files_changed.files)
+        for file in filter(lambda f : f.status == 'added', files_changed.files):
+            path = file.filename.split('/')
+            if path[0] == 'contributions':
+                tasks_submitted.append(file.filename)
+        
     for t in task_submitted:
         print(t)
     else:
@@ -226,24 +220,17 @@ def check_task_limit(students: list, repo, pr):
 def check_topic_limit(students: list, repo, pr):
     commits = pr.get_commits()
     
-    # There could be multiple commits
-    # TEST WITH MULTIPLE COMMITS
-    files_changed = []
 
-    # Take last commit
-    if commits.totalCount >= 1:
-        files_changed = commits[commits.totalCount - 1]
-    else:
-        files_changed = commits[0]
-    
     valid_tasks = ['presentation', 'demo'] # For now only presentations and demos are ordered by topic date
     tasks_submitted = []
     topics_submitted = []
-    for file in filter(lambda f : f.status == 'added', files_changed.files):
-        path = file.filename.split('/')
-        if path[0] == 'contributions' and path[1] in valid_tasks:
-            tasks_submitted.append(path[1])
-            topics_submitted.append(path[2])
+    
+    for files_changed in commits:
+        for file in filter(lambda f : f.status == 'added', files_changed.files):
+            path = file.filename.split('/')
+            if path[0] == 'contributions' and path[1] in valid_tasks:
+                tasks_submitted.append(path[1])
+                topics_submitted.append(path[2])
 
 
     # for each student
