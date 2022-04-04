@@ -281,6 +281,10 @@ def main():
     pr = repo.get_pull(int(sys.argv[2]))
     students = []
 
+    if not pr.body or pr.body == "":
+        raise RuntimeError("Empty PR Body")
+
+    
     find_students(students, pr.body)
 
     if len(students) == 1:
