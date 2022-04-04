@@ -1,6 +1,6 @@
 name: DevOps Course Rules Enforcement
 on:
-  pull-request:
+  pull_request:
     branches:
         - main
       paths:
