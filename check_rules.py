@@ -68,29 +68,8 @@ def soloCheck(name, repo, pr):
             if len(names) == 1:
                 num_times_alone+=1
 
-
-    commits = pr.get_commits()
-
-    # There could be multiple commits
-    # TEST WITH MULTIPLE COMMITS
-    files_changed = []
-
-    # Take last commit
-    if commits.totalCount >= 1:
-        files_changed = commits[commits.totalCount - 1]
-    else:
-        files_changed = commits[0]
-
-    for file in files_changed.files:
-        if file.status == "added":
-            adding = True
-        else:
-            adding = False
-
-
-    if (adding):
-        if num_times_alone > 1:
-             raise RuntimeError("Student may not work alone again")
+    if num_times_alone > 1:
+            raise RuntimeError("Student may not work alone again")
 
 # No two students work together more than twice
 def partnerCheck(students, repo, pr):
@@ -137,27 +116,8 @@ def partnerCheck(students, repo, pr):
         if students[0] in word[1] and students[1] in word[1]:
             num_times_together+=1
 
-    commits = pr.get_commits()
-
-    # There could be multiple commits
-    # TEST WITH MULTIPLE COMMITS
-    files_changed = []
-
-    # Take last commit
-    if commits.totalCount >= 1:
-        files_changed = commits[commits.totalCount - 1]
-    else:
-        files_changed = commits[0]
-
-    for file in files_changed.files:
-        if file.status == "added":
-            adding = True
-        else:
-            adding = False
-
-    if (adding):
-        if num_times_together > 1:
-             raise RuntimeError("Students may not work together again")
+    if num_times_together > 1:
+            raise RuntimeError("Students may not work together again")
 
 
 
@@ -284,6 +244,14 @@ def main():
     if not pr.body or pr.body == "":
         raise RuntimeError("Empty PR Body")
 
+
+    '''
+
+    If there was a "Final Submission" PR Template approve it would be simple to check for it here.
+
+    We would then simply not run our proposal checks if it were the case of a Final Submission 
+
+    '''
     
     find_students(students, pr.body)
 
