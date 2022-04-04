@@ -1,5 +1,6 @@
 name: DevOps Course Rules Enforcement
 on:
+# Change to PR
   push:
 jobs:
   build:
@@ -11,4 +12,4 @@ jobs:
       - run:
           pip install PyGithub
       - run:
-          python check_rules.py ${{ secrets.GITHUB_TOKEN }} ${{toJson(github.event)}}
+          python check_rules.py ${{ secrets.GITHUB_TOKEN }} ${{ github.event.pull_request.number }}
