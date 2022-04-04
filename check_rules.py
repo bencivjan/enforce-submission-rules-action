@@ -221,22 +221,24 @@ def check_topic_limit(students: list, repo, pr):
 
 def main():
 
-    f = open('token.txt','r')
-    github = Github(f.readline())
-    f.close()
-    # github = Github(sys.argv[1])
+    # f = open('token.txt','r')
+    # github = Github(f.readline())
+    # f.close()
+    github = Github(sys.argv[1])
 
     # repo = github.get_repo('KTH/devops-course', lazy=False)
     repo = github.get_repo(sys.argv[3], lazy=False)
     
     # pr_num = 1606   # worked alone once
     # pr_num = 1605   # worked alone twice
-    pr_num = 1582   # worked together once
+    # pr_num = 1582   # worked together once
     # pr_num = 1650   # worked together twice
-    # pr_num = 1614 # Preston's demo pull request
+    # pr_num = 1614 # Preson's demo pull request
     # pr_num = sys.argv[2]
 
-    pr = repo.get_pull(pr_num)
+    print(sys.argv[2])
+    print(type(sys.argv[2]))
+    pr = repo.get_pull(int(sys.argv[2]))
     students = []
 
     # Use Ben's method of getting student names
@@ -265,8 +267,8 @@ def main():
     else:
         raise RuntimeError("Issue with number of students on the PR")
 
-    # check_topic_limit(students, repo, pr)
-    # check_task_limit(students, repo, pr)
+    check_topic_limit(students, repo, pr)
+    check_task_limit(students, repo, pr)
 
 
 if __name__ == "__main__":
