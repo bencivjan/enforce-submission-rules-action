@@ -6,6 +6,7 @@ Proposal Verifications - Category and Presentation/Demo Date
 
 ## Names and KTH ID
   - Brad Palagi (palagi@kth.se)
+  - Preston Chao (pchao@kth.se)
   - Ben Civjan (civjan@kth.se)
 
 ## Deadline
