@@ -4,8 +4,8 @@ We will create a script to enforce the submission rules of the course.
 These include:
 1. Ensuring that students are not partners with the same person for more than two projects
 2. Ensuring that students are not working alone for more than two projects
-3. Ensuring that a student is not choosing the same topic (ex. Testing & CI, Containers & Serverless, etc.) for two different tasks
-4. Making sure that a student has not done more a task (ex. presentation, essay, etc.) more than once
+3. Ensuring that a student is not choosing the same topic (ex. Testing & CI, Containers & Serverless, etc.) for a demo and presentation
+4. Making sure that a student has not done a task (ex. presentation, essay, etc.) more than once
 '''
 
 from ctypes import sizeof
@@ -128,7 +128,7 @@ def find_students(students: list, text: str):
             name = ''
             for char in word.split('@')[0]:
                 if char.isalpha():
-                    name += char
+                    name += char.lower()
             students.append(name)
     return students
 
@@ -137,20 +137,20 @@ def check_task_limit(students: list, repo, pr):
     commits = pr.get_commits()
 
     # There could be multiple commits
-    # TEST WITH MULTIPLE COMMITS
-    files_changed = []
-
-    # Take last commit
-    if commits.totalCount >= 1:
-        files_changed = commits[commits.totalCount - 1]
-    else:
-        files_changed = commits[0]
-
     tasks_submitted = []
-    for file in filter(lambda f : f.status == 'added', files_changed.files):
-        path = file.filename.split('/')
-        if path[0] == 'contributions':
-            tasks_submitted.append(file.filename)
+    topics_submitted = []
+
+    # Don't allow students to include different tasks or topics in the same pr
+    for files_changed in commits:
+        # print(files_changed.files)
+        for file in filter(lambda f : f.status == 'added', files_changed.files):
+            path = file.filename.split('/')
+            if path[0] == 'contributions':
+                tasks_submitted.append(file.filename)
+
+    if len(tasks_submitted) > 1:
+        raise RuntimeError("Please only create one file per pull request")
+        
 
     # since we need the path index of the groups, we need to know which tasks have subfolders that
     # organize group submissions by topic
@@ -158,46 +158,47 @@ def check_task_limit(students: list, repo, pr):
 
     for task_filename in tasks_submitted:
         task_submitted = task_filename.split('/')[1]
-        topic_submitted = task_filename.split('/')[2]
+        for topic_filename in topics_submitted:
+            topic_submitted = topic_filename.split('/')[2]
 
-        groupNamePathIndex = 2 if task_submitted not in tasks_organized_by_date else 3
-        # Go to task directory to see if they have already done this task
-        previous_groups = repo.get_contents(f'contributions/{task_submitted}')
-        if groupNamePathIndex == 3:
-            previous_groups = repo.get_contents(f'contributions/{task_submitted}/{topic_submitted}')
+            groupNamePathIndex = 2
+            if task_submitted in tasks_organized_by_date:
+                groupNamePathIndex = 3
+            print(f'groupNamePathIndex: {groupNamePathIndex}')
+            # Go to task directory to see if they have already done this task
+            previous_groups = repo.get_contents(f'contributions/{task_submitted}')
+            if groupNamePathIndex == 3:
+                previous_groups = repo.get_contents(f'contributions/{task_submitted}/{topic_submitted}')
 
-        for group in filter(lambda g : g.type == 'dir', previous_groups):            
-            group_names = group.path.split('/')[groupNamePathIndex].split('-')
-            for student in students:
-                if student in group_names:
-                    raise RuntimeError(f'Student {student} has already completed task {task_submitted}')
-        # if task_list.type == 'dir':
-        #     print(task_list.path)
+            for group in filter(lambda g : g.type == 'dir', previous_groups):            
+                group_names = group.path.split('/')[groupNamePathIndex].split('-')
+                group_names = [name.lower() for name in group_names]
+                for student in students:
+                    print(f'student: {student}, group_names: {group_names}')
+                    if student in group_names:
+                        raise RuntimeError(f'Student {student} has already completed task {task_submitted}')
+            # if task_list.type == 'dir':
+            #     print(task_list.path)
     return True
 
 
 def check_topic_limit(students: list, repo, pr):
     commits = pr.get_commits()
     
-    # There could be multiple commits
-    # TEST WITH MULTIPLE COMMITS
-    files_changed = []
 
-    # Take last commit
-    if commits.totalCount >= 1:
-        files_changed = commits[commits.totalCount - 1]
-    else:
-        files_changed = commits[0]
-    
     valid_tasks = ['presentation', 'demo'] # For now only presentations and demos are ordered by topic date
     tasks_submitted = []
     topics_submitted = []
-    for file in filter(lambda f : f.status == 'added', files_changed.files):
-        path = file.filename.split('/')
-        if path[0] == 'contributions' and path[1] in valid_tasks:
-            tasks_submitted.append(path[1])
-            topics_submitted.append(path[2])
 
+    for files_changed in commits:
+        for file in filter(lambda f : f.status == 'added', files_changed.files):
+            path = file.filename.split('/')
+            if path[0] == 'contributions' and path[1] in valid_tasks:
+                tasks_submitted.append(path[1])
+                topics_submitted.append(path[2])
+
+    if len(tasks_submitted) > 1:
+        raise RuntimeError("Please only create one file per pull request")
 
     # for each student
     #   for each valid task, check the(each) topic for the student's name
@@ -208,7 +209,8 @@ def check_topic_limit(students: list, repo, pr):
             for topic_submitted in topics_submitted:
                 previous_groups = repo.get_contents(f'contributions/{valid_task}/{topic_submitted}')
                 for group in filter(lambda g : g.type == 'dir', previous_groups):
-                    if student in group.path.split('/')[3].split('-'):
+                    group_names = [ name.lower() for name in group.path.split('/')[3].split('-') ]
+                    if student in group_names:
                         raise RuntimeError(f'Student {student} has already completed task {valid_task} for topic {topic_submitted}')
     
     return True
@@ -255,6 +257,9 @@ def main():
     
     find_students(students, pr.body)
 
+    check_topic_limit(students, repo, pr)
+    check_task_limit(students, repo, pr)
+
     if len(students) == 1:
         soloCheck(students[0],repo, pr)
     elif len(students) == 2:
@@ -274,9 +279,6 @@ def main():
         partnerCheck(two,repo, pr)
     else:
         raise RuntimeError("Issue with number of students on the PR")
-
-    check_topic_limit(students, repo, pr)
-    check_task_limit(students, repo, pr)
 
 
 if __name__ == "__main__":
