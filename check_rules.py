@@ -88,7 +88,7 @@ def soloCheck(name, repo, pr):
 
     if (adding):
         if num_times_alone > 1:
-             raise RuntimeError("Student may not work alone again")
+             raise RuntimeError(f'Student {name} may not work alone again')
 
 # No two students work together more than twice
 def partnerCheck(students, repo, pr):
