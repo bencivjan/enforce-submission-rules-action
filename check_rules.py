@@ -152,7 +152,7 @@ def check_task_limit(students: list, repo, pr):
         files_changed = commits[0]
 
     tasks_submitted = []
-    for file in files_changed.files:
+    for file in filter(lambda f : f.status == 'added', files_changed.files):
         path = file.filename.split('/')
         if path[0] == 'contributions':
             tasks_submitted.append(file.filename)
@@ -197,7 +197,7 @@ def check_topic_limit(students: list, repo, pr):
     valid_tasks = ['presentation', 'demo'] # For now only presentations and demos are ordered by topic date
     tasks_submitted = []
     topics_submitted = []
-    for file in files_changed.files:
+    for file in filter(lambda f : f.status == 'added', files_changed.files):
         path = file.filename.split('/')
         if path[0] == 'contributions' and path[1] in valid_tasks:
             tasks_submitted.append(path[1])
@@ -221,30 +221,31 @@ def check_topic_limit(students: list, repo, pr):
 
 def main():
 
-    # f = open('token.txt','r')
-    # github = Github(f.readline())
-    # f.close()
-    github = Github(sys.argv[1])
+    # Local Testing
+    f = open('token.txt','r')
+    github = Github(f.readline())
+    f.close()
 
-    # repo = github.get_repo('KTH/devops-course', lazy=False)
-    repo = github.get_repo(sys.argv[3], lazy=False)
+    repo = github.get_repo('KTH/devops-course', lazy=False)
     
     # pr_num = 1606   # worked alone once
     # pr_num = 1605   # worked alone twice
     # pr_num = 1582   # worked together once
     # pr_num = 1650   # worked together twice
     # pr_num = 1614 # Preson's demo pull request
-    # pr_num = sys.argv[2]
 
-    print(sys.argv[2])
-    print(type(sys.argv[2]))
+    # pr = repo.get_pull(pr_num)
+    # students = []
+    # find_students(students, pr.body)
+    # check_topic_limit(students, repo, pr)
+    # check_task_limit(students, repo, pr)
+
+    # Production
+    github = Github(sys.argv[1])
     pr = repo.get_pull(int(sys.argv[2]))
+    repo = github.get_repo(sys.argv[3], lazy=False)
     students = []
 
-    # Use Ben's method of getting student names
-    # for word in words:
-    #     if '@kth.se' in word:
-    #         students.append(word.split('(')[1].split('@')[0])
     find_students(students, pr.body)
 
     if len(students) == 1:
