@@ -126,51 +126,16 @@ def partnerCheck(students, repo):
         raise RuntimeError("Students have already worked together twice")
 
 
-def main():
-
-    f = open('token.txt','r')
-    github = Github(f.readline())
-    f.close()
-    # github = Github(sys.argv[1])
-
-    repo = github.get_repo('KTH/devops-course', lazy=False)
-    
-    # pr_num = 1606   # worked alone once
-    # pr_num = 1605   # worked alone twice
-    # pr_num = 1582   # worked together once
-    pr_num = 1650   # worked together twice
-    # pr_num = sys.argv[2]
-
-    pr = repo.get_pull(pr_num)
-    words = pr.body.split()
-    students = []
-
-    # Use Ben's method of getting student names
+def find_students(students: list, text: str):
+    words = text.split()
     for word in words:
         if '@kth.se' in word:
-            students.append(word.split('(')[1].split('@')[0])
-
-    if len(students) == 1:
-        soloCheck(students[0],repo)
-    elif len(students) == 2:
-        partnerCheck(students,repo)
-    else:
-        raise RuntimeError("Issue with number of students on the PR")
-
-
-if __name__ == "__main__":
-    main()
-
-# def find_students(students: list, text: str):
-#     words = text.split()
-#     for word in words:
-#         if '@kth.se' in word:
-#             name = ''
-#             for char in word.split('@')[0]:
-#                 if char.isalpha():
-#                     name += char
-#             students.append(name)
-#     return students
+            name = ''
+            for char in word.split('@')[0]:
+                if char.isalpha():
+                    name += char
+            students.append(name)
+    return students
 
 
 def check_task_limit(students: list, repo, pr):
@@ -253,53 +218,42 @@ def check_topic_limit(students: list, repo, pr):
     
     return True
 
-  
-# example_body = '''
-# # Assignment Proposal
-
-# ## Title
-
-# DevOps in healthcare technology
-
-# ## Names and KTH ID
-
-#     print (sys.argv[2].number)
-
-# ## Deadline
-
-# Task 1 (April 5)
-
-# ## Category
-
-# Week 3: Continuous Deployment / Delivery and Feature flags (April 5)
-
-# ## Description
-
-# The manufacture of medical devices is a strictly regulated domain in the European Union. Medical Devices traditionally follow the Waterfall methodology of development, where design is predefined, testing is often manual and updates can take months to roll out due to a bloated architecture. This is where DevOps solves these problems by making the architecture leaner and allowing for teams to make changes faster and more efficiently. It allows teams to be able to meet changing market needs and factor in feedback. 
-
-# We want to give a presentation on how the healthcare industry can (and has) implemented a DevOps methodology to improve software quality. We will discuss DevOps generally but focus on CI/CD pipelines for healthcare software. 
-# '''
-
 
 def main():
-    f = open('token')
+
+    f = open('token.txt','r')
     github = Github(f.readline())
     f.close()
+    # github = Github(sys.argv[1])
 
     repo = github.get_repo('KTH/devops-course', lazy=False)
+    
+    # pr_num = 1606   # worked alone once
+    # pr_num = 1605   # worked alone twice
+    # pr_num = 1582   # worked together once
+    pr_num = 1650   # worked together twice
+    # pr_num = 1614 # Preson's demo pull request
+    # pr_num = sys.argv[2]
+
+    pr = repo.get_pull(pr_num)
     students = []
 
-    pr = repo.get_pull(1650) # sys.argv[2] hardcode for now
-
-    demo_pr = repo.get_pull(1614)
+    # Use Ben's method of getting student names
+    # for word in words:
+    #     if '@kth.se' in word:
+    #         students.append(word.split('(')[1].split('@')[0])
     find_students(students, pr.body)
-    # check_topic_limit(students, repo, demo_pr)
-    check_task_limit(students, repo, pr)
 
-    # print(find_students(students, example_body))
+    if len(students) == 1:
+        soloCheck(students[0],repo)
+    elif len(students) == 2:
+        partnerCheck(students,repo)
+    else:
+        raise RuntimeError("Issue with number of students on the PR")
+
+    # check_topic_limit(students, repo, pr)
     # check_task_limit(students, repo, pr)
 
-    # for i in check_task_limit(students, repo, pr):
-    #     print(i)
 
-main()
+if __name__ == "__main__":
+    main()
