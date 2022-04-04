@@ -68,14 +68,10 @@ def soloCheck(name, repo):
             if len(names) == 1:
                 num_times_alone+=1
 
-    print("Number of times ", name, "worked alone: ", num_times_alone)
-
-
-    if num_times_alone > 1:
-        raise RuntimeError("Student may not work alone again")
-    else:
-        print ("Student okay to work alone")
-
+    # if it equals two, need to make sure this current pr is just modifying a proposal.
+    if (current pr is adding files):
+        if num_times_alone > 1:
+            raise RuntimeError("Student may not work alone again")
 
 # No two students work together more than twice
 def partnerCheck(students, repo):
@@ -122,8 +118,10 @@ def partnerCheck(students, repo):
         if students[0] in word[1] and students[1] in word[1]:
             num_times_together+=1
 
-    if num_times_together > 1:
-        raise RuntimeError("Students have already worked together twice")
+    if (current pr is adding files):
+        if num_times_together > 1:
+             raise RuntimeError("Students may not work together again")
+
 
 
 def find_students(students: list, text: str):
