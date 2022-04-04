@@ -2,9 +2,9 @@ name: DevOps Course Rules Enforcement
 on:
   pull_request:
     branches:
-        - main
-      paths:
-        - contributions/**
+      - main
+    paths:
+      - contributions/**
 jobs:
   build:
     runs-on: ubuntu-latest
