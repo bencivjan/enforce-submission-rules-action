@@ -1,7 +1,10 @@
 name: DevOps Course Rules Enforcement
 on:
-# Change to PR
-  push:
+  pull-request:
+    branches:
+        - main
+      paths:
+        - contributions/**
 jobs:
   build:
     runs-on: ubuntu-latest
