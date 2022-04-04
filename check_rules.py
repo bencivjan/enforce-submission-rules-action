@@ -15,7 +15,7 @@ import re
 
 
 # No student works alone more than twice
-def soloCheck(name, repo):
+def soloCheck(name, repo, pr):
     num_times_alone = 0
 
     # contents should contain all folders contained in /contributions
@@ -68,17 +68,32 @@ def soloCheck(name, repo):
             if len(names) == 1:
                 num_times_alone+=1
 
-    print("Number of times ", name, "worked alone: ", num_times_alone)
 
+    commits = pr.get_commits()
 
-    if num_times_alone > 1:
-        raise RuntimeError("Student may not work alone again")
+    # There could be multiple commits
+    # TEST WITH MULTIPLE COMMITS
+    files_changed = []
+
+    # Take last commit
+    if commits.totalCount >= 1:
+        files_changed = commits[commits.totalCount - 1]
     else:
-        print ("Student okay to work alone")
+        files_changed = commits[0]
 
+    for file in files_changed.files:
+        if file.status == "added":
+            adding = True
+        else:
+            adding = False
+
+
+    if (adding):
+        if num_times_alone > 1:
+             raise RuntimeError("Student may not work alone again")
 
 # No two students work together more than twice
-def partnerCheck(students, repo):
+def partnerCheck(students, repo, pr):
     num_times_together = 0
 
     # contents should contain all folders contained in /contributions
@@ -122,8 +137,28 @@ def partnerCheck(students, repo):
         if students[0] in word[1] and students[1] in word[1]:
             num_times_together+=1
 
-    if num_times_together > 1:
-        raise RuntimeError("Students have already worked together twice")
+    commits = pr.get_commits()
+
+    # There could be multiple commits
+    # TEST WITH MULTIPLE COMMITS
+    files_changed = []
+
+    # Take last commit
+    if commits.totalCount >= 1:
+        files_changed = commits[commits.totalCount - 1]
+    else:
+        files_changed = commits[0]
+
+    for file in files_changed.files:
+        if file.status == "added":
+            adding = True
+        else:
+            adding = False
+
+    if (adding):
+        if num_times_together > 1:
+             raise RuntimeError("Students may not work together again")
+
 
 
 def find_students(students: list, text: str):
@@ -249,22 +284,22 @@ def main():
     find_students(students, pr.body)
 
     if len(students) == 1:
-        soloCheck(students[0],repo)
+        soloCheck(students[0],repo, pr)
     elif len(students) == 2:
-        partnerCheck(students,repo)
+        partnerCheck(students,repo, pr)
     elif len(students) == 3:
         two = []
         two.append(students[0])
         two.append(students[1])
-        partnerCheck(two,repo)
+        partnerCheck(two,repo, pr)
         two = []
         two.append(students[0])
         two.append(students[2])
-        partnerCheck(two,repo)
+        partnerCheck(two,repo, pr)
         two = []
         two.append(students[1])
         two.append(students[2])
-        partnerCheck(two,repo)
+        partnerCheck(two,repo, pr)
     else:
         raise RuntimeError("Issue with number of students on the PR")
 
