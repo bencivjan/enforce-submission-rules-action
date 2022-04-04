@@ -27,6 +27,3 @@ The automation should perform the following :
 -   Run for each new pull request having a label corresponding to an assignment
 -   Check if the author of the pull request has commented the teammate finder issue
 -   If so, remove its comment on this issue
-
-
-actual final edit post original merge: adding my final link: google.com
