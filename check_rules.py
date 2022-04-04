@@ -146,7 +146,8 @@ def check_task_limit(students: list, repo, pr):
         for file in filter(lambda f : f.status == 'added', files_changed.files):
             path = file.filename.split('/')
             if path[0] == 'contributions':
-                tasks_submitted.append(file.filename)
+                tasks_submitted.append(path[1])
+                topics_submitted.append(path[2])
 
     if len(tasks_submitted) > 1:
         raise RuntimeError("Please only create one file per pull request")
@@ -156,10 +157,10 @@ def check_task_limit(students: list, repo, pr):
     # organize group submissions by topic
     tasks_organized_by_date = ['presentation', 'demo']
 
-    for task_filename in tasks_submitted:
-        task_submitted = task_filename.split('/')[1]
+    for task_submitted in tasks_submitted:
+        # task_submitted = task_filename.split('/')[1]
         for topic_filename in topics_submitted:
-            topic_submitted = topic_filename.split('/')[2]
+            # topic_submitted = topic_filename.split('/')[2]
 
             groupNamePathIndex = 2
             if task_submitted in tasks_organized_by_date:
@@ -168,7 +169,7 @@ def check_task_limit(students: list, repo, pr):
             # Go to task directory to see if they have already done this task
             previous_groups = repo.get_contents(f'contributions/{task_submitted}')
             if groupNamePathIndex == 3:
-                previous_groups = repo.get_contents(f'contributions/{task_submitted}/{topic_submitted}')
+                previous_groups = repo.get_contents(f'contributions/{task_submitted}/{topic_filename}')
 
             for group in filter(lambda g : g.type == 'dir', previous_groups):            
                 group_names = group.path.split('/')[groupNamePathIndex].split('-')
