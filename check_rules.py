@@ -165,7 +165,7 @@ def find_students(students: list, text: str):
             name = ''
             for char in word.split('@')[0]:
                 if char.isalpha():
-                    name += char
+                    name += char.lower()
             students.append(name)
     return students
 
@@ -174,7 +174,6 @@ def check_task_limit(students: list, repo, pr):
     commits = pr.get_commits()
 
     # There could be multiple commits
-    # TEST WITH MULTIPLE COMMITS
     files_changed = []
 
     # Take last commit
@@ -205,7 +204,9 @@ def check_task_limit(students: list, repo, pr):
 
         for group in filter(lambda g : g.type == 'dir', previous_groups):            
             group_names = group.path.split('/')[groupNamePathIndex].split('-')
+            group_names = [name.lower() for name in group_names]
             for student in students:
+                print(f'student: {student}, group_names: {group_names}')
                 if student in group_names:
                     raise RuntimeError(f'Student {student} has already completed task {task_submitted}')
         # if task_list.type == 'dir':
@@ -245,7 +246,8 @@ def check_topic_limit(students: list, repo, pr):
             for topic_submitted in topics_submitted:
                 previous_groups = repo.get_contents(f'contributions/{valid_task}/{topic_submitted}')
                 for group in filter(lambda g : g.type == 'dir', previous_groups):
-                    if student in group.path.split('/')[3].split('-'):
+                    group_names = [ name.lower() for name in group.path.split('/')[3].split('-') ]
+                    if student in group_names:
                         raise RuntimeError(f'Student {student} has already completed task {valid_task} for topic {topic_submitted}')
     
     return True
