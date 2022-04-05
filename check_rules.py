@@ -151,7 +151,9 @@ def check_task_limit(students: list, repo, pr):
 
     if len(tasks_submitted) > 1:
         raise RuntimeError("Please only create one file per pull request")
-        
+    
+    print(f'task submitted: {tasks_submitted[0]}')
+    print(f'topic submitted: {topics_submitted[0]}')
 
     # since we need the path index of the groups, we need to know which tasks have subfolders that
     # organize group submissions by topic
@@ -161,6 +163,7 @@ def check_task_limit(students: list, repo, pr):
         # task_submitted = task_filename.split('/')[1]
         for topic_filename in topics_submitted:
             # topic_submitted = topic_filename.split('/')[2]
+            print(task_submitted, topic_filename)
 
             groupNamePathIndex = 2
             if task_submitted in tasks_organized_by_date:
@@ -171,7 +174,8 @@ def check_task_limit(students: list, repo, pr):
             if groupNamePathIndex == 3:
                 previous_groups = repo.get_contents(f'contributions/{task_submitted}/{topic_filename}')
 
-            for group in filter(lambda g : g.type == 'dir', previous_groups):            
+            print(f'previous_groups without dir filter: {previous_groups}')
+            for group in filter(lambda g : g.type == 'dir', previous_groups):  
                 group_names = group.path.split('/')[groupNamePathIndex].split('-')
                 group_names = [name.lower() for name in group_names]
                 for student in students:
@@ -220,66 +224,66 @@ def check_topic_limit(students: list, repo, pr):
 def main():
 
 #     # Local Testing
-#     f = open('token.txt','r')
-#     github = Github(f.readline())
-#     f.close()
+    f = open('token.txt','r')
+    github = Github(f.readline())
+    f.close()
 
-#     repo = github.get_repo('KTH/devops-course', lazy=False)
+    repo = github.get_repo('KTH/devops-course', lazy=False)
     
     # pr_num = 1606   # worked alone once
     # pr_num = 1605   # worked alone twice
     # pr_num = 1582   # worked together once
     # pr_num = 1650   # worked together twice
-    # pr_num = 1614 # Preson's demo pull request
+    pr_num = 1614 # Preson's demo pull request
 
-    # pr = repo.get_pull(pr_num)
-    # students = []
+    pr = repo.get_pull(pr_num)
+    students = []
     # find_students(students, pr.body)
+    # check_topic_limit(students, repo, pr)
+    check_task_limit(['cheater1'], repo, pr)
+
+    # Production
+    # github = Github(sys.argv[1])
+    # repo = github.get_repo(sys.argv[3], lazy=False)
+    # pr = repo.get_pull(int(sys.argv[2]))
+    # students = []
+
+    # if not pr.body or pr.body == "":
+    #     raise RuntimeError("Empty PR Body")
+
+
+    # '''
+
+    # If there was a "Final Submission" PR Template approve it would be simple to check for it here.
+
+    # We would then simply not run our proposal checks if it were the case of a Final Submission 
+
+    # '''
+    
+    # find_students(students, pr.body)
+
     # check_topic_limit(students, repo, pr)
     # check_task_limit(students, repo, pr)
 
-    # Production
-    github = Github(sys.argv[1])
-    repo = github.get_repo(sys.argv[3], lazy=False)
-    pr = repo.get_pull(int(sys.argv[2]))
-    students = []
-
-    if not pr.body or pr.body == "":
-        raise RuntimeError("Empty PR Body")
-
-
-    '''
-
-    If there was a "Final Submission" PR Template approve it would be simple to check for it here.
-
-    We would then simply not run our proposal checks if it were the case of a Final Submission 
-
-    '''
-    
-    find_students(students, pr.body)
-
-    check_topic_limit(students, repo, pr)
-    check_task_limit(students, repo, pr)
-
-    if len(students) == 1:
-        soloCheck(students[0],repo, pr)
-    elif len(students) == 2:
-        partnerCheck(students,repo, pr)
-    elif len(students) == 3:
-        two = []
-        two.append(students[0])
-        two.append(students[1])
-        partnerCheck(two,repo, pr)
-        two = []
-        two.append(students[0])
-        two.append(students[2])
-        partnerCheck(two,repo, pr)
-        two = []
-        two.append(students[1])
-        two.append(students[2])
-        partnerCheck(two,repo, pr)
-    else:
-        raise RuntimeError("Issue with number of students on the PR")
+    # if len(students) == 1:
+    #     soloCheck(students[0],repo, pr)
+    # elif len(students) == 2:
+    #     partnerCheck(students,repo, pr)
+    # elif len(students) == 3:
+    #     two = []
+    #     two.append(students[0])
+    #     two.append(students[1])
+    #     partnerCheck(two,repo, pr)
+    #     two = []
+    #     two.append(students[0])
+    #     two.append(students[2])
+    #     partnerCheck(two,repo, pr)
+    #     two = []
+    #     two.append(students[1])
+    #     two.append(students[2])
+    #     partnerCheck(two,repo, pr)
+    # else:
+    #     raise RuntimeError("Issue with number of students on the PR")
 
 
 if __name__ == "__main__":
