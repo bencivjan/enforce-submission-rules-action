@@ -138,7 +138,7 @@ def check_task_limit(students: list, repo, pr):
 
     # There could be multiple commits
     tasks_submitted = []
-    topics_submitted = []
+    # topics_submitted = []
 
     # Don't allow students to include different tasks or topics in the same pr
     for files_changed in commits:
@@ -147,21 +147,31 @@ def check_task_limit(students: list, repo, pr):
             path = file.filename.split('/')
             if path[0] == 'contributions':
                 tasks_submitted.append(path[1])
-                topics_submitted.append(path[2])
+                # topics_submitted.append(path[2])
 
     if len(tasks_submitted) > 1:
         raise RuntimeError("Please only create one file per pull request")
     
-    print(f'task submitted: {tasks_submitted[0]}')
-    print(f'topic submitted: {topics_submitted[0]}')
+    # print(f'task submitted: {tasks_submitted[0]}')
+    # print(f'topic submitted: {topics_submitted[0]}')
 
     # since we need the path index of the groups, we need to know which tasks have subfolders that
     # organize group submissions by topic
     tasks_organized_by_date = ['presentation', 'demo']
+    topics_list = [
+        'week2-testing-and-CI',
+        'week3-CD-and-feature-flag',
+        'week4-containers-and-serverless',
+        'week5-Infrastructure-as-Code',
+        'week6-software-bots',
+        'week7-dependency-DevSecOps',
+        'week8-culture-and-legal',
+        'week9-other'
+    ]
 
     for task_submitted in tasks_submitted:
         # task_submitted = task_filename.split('/')[1]
-        for topic_filename in topics_submitted:
+        for topic_filename in topics_list:
             # topic_submitted = topic_filename.split('/')[2]
             print(task_submitted, topic_filename)
 
